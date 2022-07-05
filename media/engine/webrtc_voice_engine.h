@@ -94,6 +94,13 @@ class WebRtcVoiceEngine final : public VoiceEngineInterface {
   // Stops AEC dump.
   void StopAecDump() override;
 
+  void SendAudio(webrtc::AudioFrameType frameType,
+                 uint8_t payloadType,
+                 uint32_t rtp_timestamp,
+                 const uint8_t* payloadData,
+                 size_t payloadSize,
+                 int64_t absolute_capture_timestamp_ms);
+
  private:
   // Every option that is "set" will be applied. Every option not "set" will be
   // ignored. This allows us to selectively turn on and off different options
@@ -267,6 +274,13 @@ class WebRtcVoiceMediaChannel final : public VoiceMediaChannel,
 
     return VoiceMediaChannel::SendRtcp(&packet, rtc_options);
   }
+
+  void SendAudio(webrtc::AudioFrameType frameType,
+                 uint8_t payloadType,
+                 uint32_t rtp_timestamp,
+                 const uint8_t* payloadData,
+                 size_t payloadSize,
+                 int64_t absolute_capture_timestamp_ms);
 
  private:
   bool SetOptions(const AudioOptions& options);

@@ -2554,6 +2554,32 @@ void PeerConnection::RequestUsagePatternReportForTesting() {
       /* delay_ms= */ 0);
 }
 
+void PeerConnection::RequestKeyFrame() {
+  rtc::Thread* sig_thread = signaling_thread();
+
+  if (sig_thread != nullptr) {
+    sig_thread->PostTask(RTC_FROM_HERE, [this]() {
+      std::vector<cricket::VideoMediaChannel*> channels;
+      for (const auto& transceiver : rtp_manager()->transceivers()->List()) {
+        if (transceiver->media_type() != cricket::MEDIA_TYPE_VIDEO)
+          continue;
+
+        auto* video_channel = static_cast<cricket::VideoChannel*>(
+            transceiver->internal()->channel());
+        if (video_channel)
+          channels.push_back(video_channel->media_channel());
+      }
+
+      worker_thread()->Invoke<void>(RTC_FROM_HERE,
+                                    [channels = std::move(channels)]() {
+                                      for (auto* ch : channels) {
+                                        ch->GenerateKeyFrame();
+                                      }
+                                    });
+    });
+  }
+}
+
 std::function<void(const rtc::CopyOnWriteBuffer& packet,
                    int64_t packet_time_us)>
 PeerConnection::InitializeRtcpCallback() {

@@ -447,6 +447,8 @@ class PeerConnection : public PeerConnectionInternal,
   }
   void RequestUsagePatternReportForTesting();
 
+  void RequestKeyFrame() override;
+
  protected:
   // Available for rtc::scoped_refptr creation
   PeerConnection(rtc::scoped_refptr<ConnectionContext> context,

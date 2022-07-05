@@ -14,6 +14,7 @@
 #include <memory>
 
 #include "api/audio/audio_frame.h"
+#include "modules/audio_coding/include/audio_coding_module_typedefs.h"
 
 namespace webrtc {
 
@@ -21,6 +22,12 @@ class AudioSender {
  public:
   // Encode and send audio.
   virtual void SendAudioData(std::unique_ptr<AudioFrame> audio_frame) = 0;
+  virtual void SendAudioData(AudioFrameType frameType,
+                             uint8_t payloadType,
+                             uint32_t rtp_timestamp,
+                             const uint8_t* payloadData,
+                             size_t payloadSize,
+                             int64_t absolute_capture_timestamp_ms) = 0;
 
   virtual ~AudioSender() = default;
 };

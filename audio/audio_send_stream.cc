@@ -427,6 +427,17 @@ void AudioSendStream::SendAudioData(std::unique_ptr<AudioFrame> audio_frame) {
   channel_send_->ProcessAndEncodeAudio(std::move(audio_frame));
 }
 
+void AudioSendStream::SendAudioData(AudioFrameType frameType,
+                                    uint8_t payloadType,
+                                    uint32_t rtp_timestamp,
+                                    const uint8_t* payloadData,
+                                    size_t payloadSize,
+                                    int64_t absolute_capture_timestamp_ms) {
+  channel_send_->SendDataInQueue(frameType, payloadType, rtp_timestamp,
+                                 payloadData, payloadSize,
+                                 absolute_capture_timestamp_ms);
+}
+
 bool AudioSendStream::SendTelephoneEvent(int payload_type,
                                          int payload_frequency,
                                          int event,

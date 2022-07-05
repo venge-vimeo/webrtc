@@ -3354,6 +3354,12 @@ void WebRtcVideoChannel::GenerateKeyFrame(uint32_t ssrc) {
   }
 }
 
+void WebRtcVideoChannel::GenerateKeyFrame() {
+  RTC_DCHECK_RUN_ON(&thread_checker_);
+  for (auto& kv : receive_streams_)
+    kv.second->GenerateKeyFrame();
+}
+
 void WebRtcVideoChannel::SetEncoderToPacketizerFrameTransformer(
     uint32_t ssrc,
     rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer) {

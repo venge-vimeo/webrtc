@@ -159,6 +159,23 @@ class ChannelSend : public ChannelSendInterface,
                    const uint8_t* payloadData,
                    size_t payloadSize,
                    int64_t absolute_capture_timestamp_ms) override;
+  void SendDataInQueue(AudioFrameType frameType,
+                       uint8_t payloadType,
+                       uint32_t rtp_timestamp,
+                       const uint8_t* payloadData,
+                       size_t payloadSize,
+                       int64_t absolute_capture_timestamp_ms) override {
+    std::vector<uint8_t> payload;
+
+    payload.assign(payloadData, payloadData + payloadSize);
+
+    encoder_queue_.PostTask([this, frameType, payloadType, rtp_timestamp,
+                             payload = std::move(payload),
+                             absolute_capture_timestamp_ms]() {
+      SendData(frameType, payloadType, rtp_timestamp, payload.data(),
+               static_cast<int>(payload.size()), absolute_capture_timestamp_ms);
+    });
+  }
 
   void OnUplinkPacketLossRate(float packet_loss_rate);
   bool InputMute() const;

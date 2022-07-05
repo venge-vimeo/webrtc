@@ -111,6 +111,12 @@ class ChannelSendInterface {
   virtual int64_t GetRTT() const = 0;
   virtual void StartSend() = 0;
   virtual void StopSend() = 0;
+  virtual void SendDataInQueue(AudioFrameType frameType,
+                               uint8_t payloadType,
+                               uint32_t rtp_timestamp,
+                               const uint8_t* payloadData,
+                               size_t payloadSize,
+                               int64_t absolute_capture_timestamp_ms) = 0;
 
   // E2EE Custom Audio Frame Encryption (Optional)
   virtual void SetFrameEncryptor(

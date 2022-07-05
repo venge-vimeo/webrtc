@@ -919,6 +919,8 @@ class VideoMediaChannel : public MediaChannel, public Delayable {
   // Cause generation of a keyframe for |ssrc|
   virtual void GenerateKeyFrame(uint32_t ssrc) = 0;
 
+  virtual void GenerateKeyFrame() = 0;
+
   virtual std::vector<webrtc::RtpSource> GetSources(uint32_t ssrc) const = 0;
 };
 

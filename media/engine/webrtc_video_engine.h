@@ -238,7 +238,7 @@ class WebRtcVideoChannel : public VideoMediaChannel,
       override;
   void ClearRecordableEncodedFrameCallback(uint32_t ssrc) override;
   void GenerateKeyFrame(uint32_t ssrc) override;
-
+  void GenerateKeyFrame() override;
   void SetEncoderToPacketizerFrameTransformer(
       uint32_t ssrc,
       rtc::scoped_refptr<webrtc::FrameTransformerInterface> frame_transformer)

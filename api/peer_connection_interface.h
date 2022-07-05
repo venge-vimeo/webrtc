@@ -1162,6 +1162,8 @@ class RTC_EXPORT PeerConnectionInterface : public rtc::RefCountInterface {
   // TODO(deadbeef): Make pure virtual when all subclasses implement it.
   virtual rtc::Thread* signaling_thread() const { return nullptr; }
 
+  virtual void RequestKeyFrame() = 0;
+
  protected:
   // Dtor protected as objects shouldn't be deleted via this interface.
   ~PeerConnectionInterface() override = default;

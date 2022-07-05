@@ -661,6 +661,18 @@ void WebRtcVoiceEngine::StopAecDump() {
   }
 }
 
+void WebRtcVoiceEngine::SendAudio(webrtc::AudioFrameType frameType,
+                                  uint8_t payloadType,
+                                  uint32_t rtp_timestamp,
+                                  const uint8_t* payloadData,
+                                  size_t payloadSize,
+                                  int64_t absolute_capture_timestamp_ms) {
+  for (auto it = channels_.begin(); it != channels_.end(); ++it) {
+    (*it)->SendAudio(frameType, payloadType, rtp_timestamp, payloadData,
+                     payloadSize, absolute_capture_timestamp_ms);
+  }
+}
+
 webrtc::AudioDeviceModule* WebRtcVoiceEngine::adm() {
   RTC_DCHECK(worker_thread_checker_.IsCurrent());
   RTC_DCHECK(adm_);
@@ -1047,6 +1059,16 @@ class WebRtcVoiceMediaChannel::WebRtcAudioSendStream
     RTC_DCHECK(worker_thread_checker_.IsCurrent());
     config_.frame_transformer = std::move(frame_transformer);
     ReconfigureAudioSendStream();
+  }
+
+  void SendAudio(webrtc::AudioFrameType frameType,
+                 uint8_t payloadType,
+                 uint32_t rtp_timestamp,
+                 const uint8_t* payloadData,
+                 size_t payloadSize,
+                 int64_t absolute_capture_timestamp_ms) {
+    stream_->SendAudioData(frameType, payloadType, rtp_timestamp, payloadData,
+                           payloadSize, absolute_capture_timestamp_ms);
   }
 
  private:
@@ -2525,4 +2547,17 @@ bool WebRtcVoiceMediaChannel::MaybeDeregisterUnsignaledRecvStream(
   }
   return false;
 }
+
+void WebRtcVoiceMediaChannel::SendAudio(webrtc::AudioFrameType frameType,
+                                        uint8_t payloadType,
+                                        uint32_t rtp_timestamp,
+                                        const uint8_t* payloadData,
+                                        size_t payloadSize,
+                                        int64_t absolute_capture_timestamp_ms) {
+  for (auto& it : send_streams_) {
+    it.second->SendAudio(frameType, payloadType, rtp_timestamp, payloadData,
+                         payloadSize, absolute_capture_timestamp_ms);
+  }
+}
+
 }  // namespace cricket
